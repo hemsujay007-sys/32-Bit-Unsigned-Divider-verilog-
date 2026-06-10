@@ -1,0 +1,86 @@
+`timescale 1ns / 1ps
+
+module dividerstructural_tb;
+
+
+    // INPUTS
+  
+
+    reg clk;
+    reg reset;
+    reg start;
+
+    reg [31:0] A;
+    reg [31:0] B;
+
+
+    // OUTPUTS
+ 
+
+    wire [31:0] D;
+    wire [31:0] R;
+
+    wire ok;
+    wire err;
+
+   
+    // INSTANTIATE DIVIDER
+
+    dividerstructural uut(
+        .clk(clk),
+        .reset(reset),
+        .start(start),
+
+        .A(A),
+        .B(B),
+
+        .D(D),
+        .R(R),
+
+        .ok(ok),
+        .err(err)
+    );
+
+    // CLOCK GENERATION
+
+    initial
+    begin
+        clk = 0;
+
+        forever #5 clk = ~clk;
+    end
+
+    // TEST CASE
+
+    initial
+    begin
+
+        // INITIAL VALUES
+
+        reset = 1;
+        start = 0;
+
+        A = 32'd1023;
+        B = 32'd50;
+
+        // RESET PHASE
+
+        #20;
+        reset = 0;
+
+        // START DIVISION
+
+        #10;
+        start = 1;
+
+
+        // KEEP START HIGH
+        // because clr = reset OR ~start
+
+        wait(ok == 1);
+
+        $finish;
+
+    end
+
+endmodule
